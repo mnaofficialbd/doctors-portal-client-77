@@ -4,7 +4,7 @@ import footerBg from '../../assets/images/footer.png'
 const Footer = () => {
     const today = new Date()
     const year = today.getFullYear();
-    
+
     return (
         <footer
             style={{
