@@ -7,8 +7,10 @@ const BookingModal = ({ treatment, date ,setTreatment}) => {
     const handleBooking = event => {
         event.preventDefault();
         const slot = event.target.slot.value;
-        setTreatment(null)
         console.log(_id,slot,name);
+
+        //for close the modal
+        setTreatment(null)
 
     }
     return (
