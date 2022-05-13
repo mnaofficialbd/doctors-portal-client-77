@@ -2,6 +2,7 @@ import { format } from 'date-fns';
 import React from 'react';
 import { useAuthState } from 'react-firebase-hooks/auth';
 import auth from '../../firebase.init';
+import Loading from '../Shared/Loading';
 
 
 const BookingModal = ({ treatment, date ,setTreatment}) => {
@@ -14,8 +15,11 @@ const BookingModal = ({ treatment, date ,setTreatment}) => {
 
         //for close the modal
         setTreatment(null)
-
     }
+    if (loading) {
+        return <Loading />
+    }
+
     return (
         <div>
             <input type="checkbox" id="booking-modal" className="modal-toggle" />
