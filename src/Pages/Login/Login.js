@@ -3,6 +3,7 @@ import { useSignInWithEmailAndPassword, useSignInWithGoogle } from 'react-fireba
 import auth from '../../firebase.init';
 import { useForm } from "react-hook-form";
 import Loading from '../Shared/Loading';
+import { Link } from 'react-router-dom';
 
 const Login = () => {
     const [signInWithGoogle, gUser, gLoading, gError] = useSignInWithGoogle(auth);
@@ -16,14 +17,14 @@ const Login = () => {
     let signInError;
 
     if (loading || gLoading) {
-        return <Loading/>
+        return <Loading />
     }
 
     if (error || gError) {
         signInError = <p className='text-red-600'> <small>{error?.message || gError?.message}</small> </p>
     }
-    if (gUser) {
-        console.log(gUser);
+    if (user || gUser) {
+        console.log(user || gUser);
     }
 
     const onSubmit = data => {
@@ -38,8 +39,6 @@ const Login = () => {
                     <h2 className="text-center text-2xl font-bold">Login</h2>
 
                     <form onSubmit={handleSubmit(onSubmit)}>
-
-
                         <div class="form-control w-full max-w-xs">
                             <label class="label">
                                 <span class="label-text">Email</span>
@@ -59,7 +58,6 @@ const Login = () => {
                             <label class="label">
                                 {errors.email?.type === 'required' && <span class="label-text-alt text-red-500">{errors.email.message}</span>}
                                 {errors.email?.type === 'pattern' && <span class="label-text-alt text-red-500">{errors.email.message}</span>}
-
                             </label>
                         </div>
                         <div class="form-control w-full max-w-xs">
@@ -81,12 +79,12 @@ const Login = () => {
                             <label class="label">
                                 {errors.password?.type === 'required' && <span class="label-text-alt text-red-500">{errors.password.message}</span>}
                                 {errors.password?.type === 'minLength' && <span class="label-text-alt text-red-500">{errors.password.message}</span>}
-
                             </label>
                         </div>
                         {signInError}
                         <input className='btn w-full max-w-xs text-white' type="submit" value='Login' />
                     </form>
+                    <p className='text-center'><small>New to Doctors Portal ? <Link className='text-secondary' to='/signUp'>Create New Account</Link> </small></p>
 
                     <div className="divider">OR</div>
                     <button
