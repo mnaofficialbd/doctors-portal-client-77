@@ -9,8 +9,39 @@ const AddDoctor = () => {
 
     const { data: services, isLoading } = useQuery('services', () => { fetch('http://localhost:5000/service').then(res => res.json()) })
 
+    const imgStorageKey = 'b81832e42347a65fbc19c2064f308dd5';
+    /**
+     * 3 ways to store images:
+     * 1. Third party storage. > Free open public storage is ok for practice project.
+     * 2. Your own storage in your own server (file system).
+     * 3. Database: Mongodb.
+     * 
+     * YUP: to validate file: search= Yup file validation for react hook form.
+     */
+
+    // img post on server from client > imgbb > database
     const onSubmit = async data => {
-        console.log(data);
+        const image = data.image[0];
+        const formData = new FormData();
+        formData.append('image', image)
+        const url = `https://api.imgbb.com/1/upload?key=${imgStorageKey}`;
+        fetch(url, {
+            method: 'POST',
+            body: formData
+        })
+            .then(res => res.json())
+            .then(result => {
+                if (result.success) {
+                    const img = result.data.url;
+                    const doctor = {
+                        name: data.name,
+                        email: data.email,
+                        specialty: data.specialty,
+                        img: img
+                    }
+                    // send to your database
+                }
+            })
     };
 
     if (isLoading) {
@@ -63,11 +94,11 @@ const AddDoctor = () => {
                         <span className="label-text">Specialty</span>
                     </label>
 
-                    <select {...register("specialty")} class="select w-full max-w-xs">
+                    <select {...register("specialty")} class="select input-bordered w-full max-w-xs">
                         {
-                            services?.map(service=><option
-                            key={service._id}
-                            value={service.name}
+                            services?.map(service => <option
+                                key={service._id}
+                                value={service.name}
                             >{service.name}</option>)
                         }
                     </select>
