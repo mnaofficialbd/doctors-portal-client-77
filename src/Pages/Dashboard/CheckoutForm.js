@@ -9,9 +9,11 @@ const CheckoutForm = ({ appointment }) => {
     const [processing, setProcessing] = useState(false);
     const [transactionId, setTransactionId] = useState('');
     const [clientSecret, setClientSecret] = useState('');
+
     const {_id, price, patient, patientName } = appointment;
+
     useEffect(() => {
-        fetch('http://localhost:5000/create-payment-intent', {
+        fetch('https://mna-doctors-portal.herokuapp.com/create-payment-intent', {
             method: 'POST',
             headers: {
                 'content-type': 'application/json',
@@ -22,9 +24,9 @@ const CheckoutForm = ({ appointment }) => {
             .then(res => res.json())
             .then(data => {
                 if (data?.clientSecret) {
-                    setClientSecret(data.clientSecret)
+                    setClientSecret(data.clientSecret);
                 }
-            })
+            });
     }, [price])
 
     const handleSubmit = async (event) => {
@@ -39,7 +41,7 @@ const CheckoutForm = ({ appointment }) => {
         const { error, paymentMethod } = await stripe.createPaymentMethod({
             type: 'card',
             card
-        })
+        });
 
         setCardError(error?.message || '');
         setSuccess('')
@@ -73,14 +75,15 @@ const CheckoutForm = ({ appointment }) => {
                 transactionId: paymentIntent.id
 
             }
-            fetch(`http://localhost:5000/booking/${_id}`,{
+            fetch(`https://mna-doctors-portal.herokuapp.com/booking/${_id}`,{
                 method: 'PATCH',
                 header: {
                     'content-type': 'application/json',
                     'authorization': `Bearer ${localStorage.getItem('accessToken')}`
                 },
                 body: JSON.stringify({ payment })
-            }).then(res => res.json()).then(data => {
+            }).then(res => res.json())
+            .then(data => {
                 setProcessing(false);
                 console.log(data);
             })
@@ -106,16 +109,16 @@ const CheckoutForm = ({ appointment }) => {
                         },
                     }}
                 />
-                <button className='btn btn-success btn-sm mt-4' type="submit" disabled={!stripe || !clientSecret}>
+                <button className='btn btn-success btn-sm mt-4' type="submit" disabled={!stripe || !clientSecret || success}>
                     Pay
                 </button>
             </form>
             {
-                cardError && <p className='text-red-500 text-center'>{cardError}</p>
+                cardError && <p className='text-red-500'>{cardError}</p>
             }
             {
-                success && <div className='text-green-500 text-center'>
-                    <p>{success}</p>
+                success && <div className='text-green-500'>
+                    <p>{success}  </p>
                     <p>Your transaction Id: <span className="text-orange-500 font-bold">{transactionId}</span> </p>
                 </div>
             }

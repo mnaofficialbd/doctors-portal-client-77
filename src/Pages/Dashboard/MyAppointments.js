@@ -12,15 +12,15 @@ const MyAppointments = () => {
 
     useEffect(() => {
         if (user) {
-            fetch(`http://localhost:5000/booking?patient=${user.email}`, {
+            fetch(`https://mna-doctors-portal.herokuapp.com/booking?patient=${user.email}`, {
                 method: 'GET',
                 headers: {
                     'authorization': `Bearer ${localStorage.getItem('accessToken')}`
                 }
             })
-                .then(res => {
-                    console.log('res', res);
-                    if (res.status === 401 || res.status === 403) {
+            .then(res => {
+                console.log('res', res);
+                if (res.status === 401 || res.status === 403) {
                         signOut(auth);
                         localStorage.removeItem('accessToken');
                         navigate('/');
@@ -28,15 +28,15 @@ const MyAppointments = () => {
                     return res.json()
                 })
                 .then(data => {
-
+                    
                     setAppointments(data);
                 });
-        }
-    }, [user, navigate])
+            }
+        }, [user,navigate])
 
-    return (
-        <div>
-            <h2 className="text-2xl text-center">My Appointments: {appointments.length}</h2>
+        return (
+            <div>
+            <h2 className='text-xl text-center my-5'>My Appointments: {appointments.length}</h2>
             <div className="overflow-x-auto">
                 <table className="table w-full">
                     <thead>
@@ -57,10 +57,14 @@ const MyAppointments = () => {
                                 <td>{a.date}</td>
                                 <td>{a.slot}</td>
                                 <td>{a.treatment}</td>
+                                <td>{a.price}</td>
                                 <td>
-                                    {(a.price && !a.paid) && <Link to={`/dashboard/payment/${a._id}`}><button className='btn btn-xs btn-success'>Pay</button></Link>}
-                                    {(a.price && a.paid) && <span className='text-success'>Paid</span>}
-                                </td>
+                                    {(a.price && !a.paid) && <Link to={`/dashboard/payment/${a._id}`}><button className='btn btn-xs btn-success'>pay</button></Link>}
+                                    {(a.price && a.paid) && <div>
+                                        <p><span className='text-success'>Paid</span></p>
+                                        <p>Transaction id: <span className='text-success'>{a.transactionId}</span></p>
+                                        </div>}
+                                    </td>
                             </tr>)
                         }
                     </tbody>
